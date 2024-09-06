@@ -1,0 +1,6 @@
+@CustomersRepo_HostAddress = http://localhost:5148
+
+GET {{CustomersRepo_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

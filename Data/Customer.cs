@@ -33,18 +33,5 @@ namespace CustomersRepo.Data
         public required string PhoneNumber { get; set; }
 
         public required DateTime BirthDate { get; set; }
-
-        static public int CalculateAge(DateTime birthDate)
-        {
-            var today = DateTime.Today;
-            int age = today.Year - birthDate.Year;
-
-            if (today < birthDate.AddYears(age))
-            {
-                age--;
-            }
-
-            return age;
-        }
     }
 }

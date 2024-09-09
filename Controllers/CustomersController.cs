@@ -26,11 +26,6 @@ namespace CustomersRepo.Controllers
         [HttpPost("create")]
         public async Task<IActionResult> CreateCustomersAsync([FromBody] List<Customer> customers)
         {
-            foreach (var customer in customers)
-            {
-                customer.Age = Customer.CalculateAge(customer.BirthDate);
-            }
-
             await _context.Customers.AddRangeAsync(customers);
             await _context.SaveChangesAsync();
 
@@ -40,11 +35,6 @@ namespace CustomersRepo.Controllers
         [HttpPost("update")]
         public async Task<IActionResult> UpdateCustomersAsync([FromBody] List<Customer> customers)
         {
-            foreach (var customer in customers)
-            {
-                customer.Age = Customer.CalculateAge(customer.BirthDate);
-            }
-
             _context.Customers.UpdateRange(customers);
             await _context.SaveChangesAsync();
             return Ok(customers);

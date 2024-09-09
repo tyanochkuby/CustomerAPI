@@ -5,21 +5,6 @@ namespace CustomersRepo.Data
 {
     public class Customer
     {
-        public Customer()
-        {
-            Id = Guid.NewGuid();
-            FirstName = string.Empty;
-            LastName = string.Empty;
-            StreetName = string.Empty;
-            HouseNumber = string.Empty;
-            AppartmentNumber = string.Empty;
-            PostalCode = string.Empty;
-            Town = string.Empty;
-            PhoneNumber = string.Empty;
-            BirthDate = new DateTime();
-            Age = CalculateAge(BirthDate);
-        }
-
         [Key]
         public Guid Id { get; set; }
 
@@ -48,8 +33,6 @@ namespace CustomersRepo.Data
         public required string PhoneNumber { get; set; }
 
         public required DateTime BirthDate { get; set; }
-
-        public required int Age { get; set; }
 
         static public int CalculateAge(DateTime birthDate)
         {

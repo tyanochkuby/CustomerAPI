@@ -26,8 +26,7 @@ namespace CustomersRepo.Data
                         PostalCode = "12-345",
                         Town = "Warszawa",
                         PhoneNumber = "123456789",
-                        BirthDate = new DateTime(1998, 04, 30),
-                        Age = Customer.CalculateAge(new DateTime(1998, 04, 30))
+                        BirthDate = new DateTime(1998, 04, 30)
                     },
                     new Customer()
                     {
@@ -40,8 +39,7 @@ namespace CustomersRepo.Data
                         PostalCode = "12-345",
                         Town = "Śrem",
                         PhoneNumber = "987654321",
-                        BirthDate = new DateTime(1998, 04, 30),
-                        Age = Customer.CalculateAge(new DateTime(1998, 04, 30))
+                        BirthDate = new DateTime(1998, 04, 30)
                     }
                 );
 

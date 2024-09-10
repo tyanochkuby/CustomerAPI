@@ -17,13 +17,6 @@ builder.Services.AddDbContext<CustomersDbContext>(options =>
 var app = builder.Build();
 app.Urls.Add("https://localhost:5001");
 
-using (var scope = app.Services.CreateScope())
-{
-    var services = scope.ServiceProvider;
-    var context = services.GetRequiredService<CustomersDbContext>();
-    SeedData.Initialize(services);
-}
-
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {

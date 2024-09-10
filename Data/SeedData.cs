@@ -17,7 +17,6 @@ namespace CustomersRepo.Data
                 context.Customers.AddRange(
                     new Customer()
                     {
-                        Id = Guid.NewGuid(),
                         FirstName = "Jan",
                         LastName = "Kowalski",
                         StreetName = "Kwiatowa",
@@ -30,7 +29,6 @@ namespace CustomersRepo.Data
                     },
                     new Customer()
                     {
-                        Id = Guid.NewGuid(),
                         FirstName = "Jana",
                         LastName = "Mazurska",
                         StreetName = "Ląkowa",

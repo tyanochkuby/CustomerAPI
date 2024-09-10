@@ -8,8 +8,6 @@ namespace CustomersRepo.Data.Interfaces
 
         public Task<IActionResult> UpdateCustomersAsync(List<Customer> customers);
 
-        public Task<IActionResult> CreateCustomersAsync(List<Customer> customers);
-
-        public Task<IActionResult> DeleteCustomersAsync(List<Guid> customerIds);
+        public Task<IActionResult> DeleteCustomersAsync(List<int> customerIds);
     }
 }

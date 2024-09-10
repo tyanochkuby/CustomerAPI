@@ -23,15 +23,6 @@ namespace CustomersRepo.Controllers
             return await _context.Customers.ToListAsync();
         }
 
-        [HttpPost("create")]
-        public async Task<IActionResult> CreateCustomersAsync([FromBody] List<Customer> customers)
-        {
-            await _context.Customers.AddRangeAsync(customers);
-            await _context.SaveChangesAsync();
-
-            return Ok(customers);
-        }
-
         [HttpPost("update")]
         public async Task<IActionResult> UpdateCustomersAsync([FromBody] List<Customer> customers)
         {
@@ -41,7 +32,7 @@ namespace CustomersRepo.Controllers
         }
 
         [HttpPost("delete")]
-        public async Task<IActionResult> DeleteCustomersAsync(List<Guid> customerIds)
+        public async Task<IActionResult> DeleteCustomersAsync(List<int> customerIds)
         {
             using var transaction = await _context.Database.BeginTransactionAsync();
 

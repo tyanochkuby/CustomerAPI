@@ -19,9 +19,9 @@ namespace CustomersRepo.Migrations
 
             modelBuilder.Entity("CustomersRepo.Data.Customer", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("AppartmentNumber")
                         .HasColumnType("TEXT");

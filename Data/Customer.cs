@@ -1,12 +1,14 @@
 ﻿using CustomersRepo.Data.Attributes;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CustomersRepo.Data
 {
     public class Customer
     {
         [Key]
-        public Guid Id { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int Id { get; set; }
 
         [PolishAlphabet]
         public required string FirstName { get; set; }

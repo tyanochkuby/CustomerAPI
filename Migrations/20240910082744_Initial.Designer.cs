@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CustomersRepo.Migrations
 {
     [DbContext(typeof(CustomersDbContext))]
-    [Migration("20240906073233_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20240910082744_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -22,11 +22,8 @@ namespace CustomersRepo.Migrations
 
             modelBuilder.Entity("CustomersRepo.Data.Customer", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("Age")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("AppartmentNumber")

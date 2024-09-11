@@ -1,6 +1,8 @@
 ﻿using CustomersRepo.Data;
 using CustomersRepo.Data.Interfaces;
+using CustomersRepo.Hubs;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 
@@ -11,9 +13,14 @@ namespace CustomersRepo.Controllers
     public class CustomersController : Controller, ICustomerService
     {
         private readonly CustomersDbContext _context;
+        private readonly IHubContext<CustomerHub> _hubContext;
+        private static DateTime _lastUpdateSent = DateTime.MinValue;
+        private static readonly TimeSpan DeadbandDuration = TimeSpan.FromMilliseconds(500);
 
-        public CustomersController(CustomersDbContext context)
+
+        public CustomersController(IHubContext<CustomerHub> hubContext, CustomersDbContext context)
         {
+            _hubContext = hubContext;
             _context = context;
         }
 
@@ -23,16 +30,23 @@ namespace CustomersRepo.Controllers
             return await _context.Customers.ToListAsync();
         }
 
-        [HttpPost("update")]
+        [HttpPut("update")]
         public async Task<IActionResult> UpdateCustomersAsync([FromBody] List<Customer> customers)
         {
             _context.Customers.UpdateRange(customers);
             await _context.SaveChangesAsync();
+
+            if (DateTime.UtcNow - _lastUpdateSent > DeadbandDuration)
+            {
+                await _hubContext.Clients.All.SendAsync("ReceiveCustomerUpdate");
+                _lastUpdateSent = DateTime.UtcNow;
+            }
+
             return Ok(customers);
         }
 
-        [HttpPost("delete")]
-        public async Task<IActionResult> DeleteCustomersAsync(List<int> customerIds)
+        [HttpDelete("delete")]
+        public async Task<IActionResult> DeleteCustomersAsync([FromQuery] List<int> customerIds)
         {
             using var transaction = await _context.Database.BeginTransactionAsync();
 
@@ -43,6 +57,11 @@ namespace CustomersRepo.Controllers
                     .ExecuteDeleteAsync();
 
                 await transaction.CommitAsync();
+                if (DateTime.UtcNow - _lastUpdateSent > DeadbandDuration)
+                {
+                    await _hubContext.Clients.All.SendAsync("ReceiveCustomerUpdate");
+                    _lastUpdateSent = DateTime.UtcNow;
+                }
                 return Ok();
             }
             catch

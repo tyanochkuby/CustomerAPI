@@ -19,7 +19,7 @@ namespace CustomersRepo.Data.Attributes
             }
 
             // Regex pattern to match Polish characters
-            var polishPattern = @"^[a-zA-ZąćęłńóśźżĄĆĘŁŃÓŚŹŻ\s]+$";
+            var polishPattern = @"^[a-zA-ZąćęłńóśźżĄĆĘŁŃÓŚŹŻ\s]{1,50}$";
             if (Regex.IsMatch(stringValue, polishPattern))
             {
                 return ValidationResult.Success;

@@ -31,12 +31,33 @@ var app = builder.Build();
 app.Urls.Add("https://localhost:5001");
 
 
-app.MapGet("users/me", async (ClaimsPrincipal claims) =>
+app.MapGet("users/me", async (ClaimsPrincipal claims, CustomersDbContext dbContext) =>
 {
-    string userld = claims.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value;
-    return userld;
+    string userId = claims.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value;
+    var user = await dbContext.Users.FindAsync(userId);
+    return new
+    {
+        userId = userId,
+        lightMode = user.LightMode
+    };
+        
 })
 .RequireAuthorization();
+
+app.MapPut("setDefaultLightMode", async (ClaimsPrincipal claims, bool lightMode, CustomersDbContext dbContext) =>
+{
+    string userId = claims.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value;
+    var user = await dbContext.Users.FindAsync(userId);
+    if (user != null)
+    {
+        user.LightMode = lightMode;
+        await dbContext.SaveChangesAsync();
+        return Results.Ok();
+    }
+    return Results.NotFound();
+})
+.RequireAuthorization();
+
 
 
 // Configure the HTTP request pipeline.

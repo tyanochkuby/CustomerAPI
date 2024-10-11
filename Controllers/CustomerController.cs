@@ -1,50 +1,39 @@
-﻿using CustomersRepo.Data.Interfaces;
-using CustomersRepo.Data;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.SignalR;
-using System.Security.Claims;
-using Microsoft.EntityFrameworkCore;
+using CustomersRepo.Data.Entities;
+using CustomersRepo.Services.Interfaces;
 
 [ApiController]
 [Route("api/[controller]")]
 [Authorize]
-public class CustomerController : Controller, ICustomerService
+public class CustomerController : ControllerBase
 {
-    private readonly CustomersDbContext _context;
-    private static DateTime _lastUpdateSent = DateTime.MinValue;
-    private static readonly TimeSpan DeadbandDuration = TimeSpan.FromMilliseconds(500);
+    private readonly ICustomerService _customerService;
 
-    public CustomerController(CustomersDbContext context)
+    public CustomerController(ICustomerService customerService)
     {
-        _context = context;
+        _customerService = customerService;
     }
 
     [HttpGet("get")]
-    public async Task<List<Customer>> GetCustomersAsync()
+    public async Task<IActionResult> GetCustomersAsync()
     {
-        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value; // Get logged-in user's ID
+        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        var customers = await _customerService.GetCustomersAsync(userId);
 
-        return await _context.Customers
-            .Where(c => c.UserId == userId) // Only return customers belonging to this user
-            .ToListAsync();
+        return Ok(customers);
     }
 
     [HttpPut("update")]
     public async Task<IActionResult> UpdateCustomersAsync([FromBody] List<Customer> customers)
     {
         var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        var success = await _customerService.UpdateCustomersAsync(userId, customers);
 
-        foreach (var customer in customers)
+        if (!success)
         {
-            if (customer.UserId != userId)
-            {
-                return Forbid(); // Prevent users from modifying other users' customers
-            }
+            return Forbid();
         }
-
-        _context.Customers.UpdateRange(customers);
-        await _context.SaveChangesAsync();
 
         return Ok(customers);
     }
@@ -53,30 +42,13 @@ public class CustomerController : Controller, ICustomerService
     public async Task<IActionResult> DeleteCustomersAsync([FromQuery] List<int> customerIds)
     {
         var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        var success = await _customerService.DeleteCustomersAsync(userId, customerIds);
 
-        using var transaction = await _context.Database.BeginTransactionAsync();
-        try
+        if (!success)
         {
-            var customersToDelete = await _context.Customers
-                .Where(c => customerIds.Contains(c.Id) && c.UserId == userId)
-                .ToListAsync();
-
-            if (!customersToDelete.Any())
-            {
-                return NotFound(); // No customers found for the logged-in user
-            }
-
-            _context.Customers.RemoveRange(customersToDelete);
-            await _context.SaveChangesAsync();
-
-            await transaction.CommitAsync();
-
-            return Ok();
+            return NotFound();
         }
-        catch
-        {
-            await transaction.RollbackAsync();
-            return BadRequest();
-        }
+
+        return Ok();
     }
 }

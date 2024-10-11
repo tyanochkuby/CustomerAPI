@@ -1,7 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using CustomersRepo.Data.Entities;
 
-namespace CustomersRepo.Data
+namespace CustomersRepo.Data.DbContexts
 {
     public class CustomersDbContext : IdentityDbContext<User>
     {
@@ -12,13 +13,7 @@ namespace CustomersRepo.Data
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
-
             base.OnModelCreating(builder);
-            //builder.HasDefaultSchema("CustomersRepo");
-            //builder.Entity<Customer>()
-            //   .HasOne(c => c.User)
-            //   .WithMany(u => u.Customers)
-            //   .HasForeignKey(c => c.UserId);
         }
         public DbSet<Customer> Customers { get; set; }
     }

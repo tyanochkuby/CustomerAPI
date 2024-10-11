@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
-namespace CustomersRepo.Data
+namespace CustomersRepo.Data.Entities
 {
     public class User : IdentityUser
     {
